@@ -1,14 +1,22 @@
 package com.tondeuse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Mower {
-	
+
+	@Autowired
 	private MowerPoint startPosition;
+
 	private String[] moves;
 
-	public MowerPoint getStartPosition() {
+	public Mower(MowerPoint startPosition, String[] moves) {
+		this.startPosition = startPosition;
+		this.moves = moves;
+	}
+
+    public MowerPoint getStartPosition() {
 		return startPosition;
 	}
 

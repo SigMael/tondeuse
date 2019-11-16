@@ -1,7 +1,10 @@
 package com.tondeuse;
 
+import org.springframework.stereotype.Component;
+
 import java.awt.Point;
 
+@Component
 public class MowerPoint extends Point {
 	private static final long serialVersionUID = 1L;
 	private String orientation;
