@@ -7,28 +7,20 @@ import org.springframework.stereotype.Component;
 public class Mower {
 
 	@Autowired
-	private MowerPoint startPosition;
+	private MowerPoint position;
 
 	private String[] moves;
 
 	public Mower(MowerPoint startPosition, String[] moves) {
-		this.startPosition = startPosition;
+		this.position = startPosition;
 		this.moves = moves;
 	}
 
     public MowerPoint getPosition() {
-		return startPosition;
-	}
-
-	public void setStartPosition(MowerPoint startPosition) {
-		this.startPosition = startPosition;
+		return position;
 	}
 
 	public String[] getMoves() {
 		return moves;
-	}
-
-	public void setMoves(String[] moves) {
-		this.moves = moves;
 	}
 }

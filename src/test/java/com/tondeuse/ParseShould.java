@@ -100,9 +100,7 @@ public class ParseShould {
     	writer.close();
     	
         //when
-        
         Lawn lawn= mowerParser.parse(mockFile);
-        
         mockFile.delete();
         
 		//then
@@ -168,9 +166,7 @@ public class ParseShould {
 		MowerPoint expectedPosition = new MowerPoint(x, y, orientation);
 
         //when
-        
         Lawn lawn = mowerParser.parse(mockFile);
-
         mockFile.delete();
 
 		//then
