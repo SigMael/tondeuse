@@ -7,7 +7,7 @@ public class MowerPoint extends Point {
 	private String orientation;
 
 	public MowerPoint() {}
-	
+
 	public MowerPoint(int x, int y, String orientation) {
 		super.x = x;
 		super.y = y;
