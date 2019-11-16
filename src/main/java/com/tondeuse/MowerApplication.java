@@ -8,13 +8,13 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource("classpath:application.properties")
 @ComponentScan("com.tondeuse")
-public class TondeuseApplication {
+public class MowerApplication {
 
 	public static void main(String[] args) {
-		try(AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TondeuseApplication.class)){
-			Runner runnerLauncher = context.getBean("runner", Runner.class);
-			
-			runnerLauncher.execute();
+		try(AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MowerApplication.class)){
+			Runner moweRunner = context.getBean("runner", Runner.class);
+
+			//moweRunner.execTondeuse();
 		} // Fermeture implicite du context
 		
 	}
