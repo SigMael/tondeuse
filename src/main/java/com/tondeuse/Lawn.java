@@ -2,7 +2,7 @@ package com.tondeuse;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.BitSet;
+import java.util.Arrays;
 
 import org.springframework.stereotype.Component;
 
@@ -29,12 +29,14 @@ public class Lawn {
 		this.mowers = mowers;
 	}
 
+	private final String orientations[] = new String[] { "N", "E", "S", "W" };
+
 	public Object mow() {
 		String result = "";
 		if(mowers.size() == 0) {
 			return "Rien a tondre!";
-		} 
-		
+		}
+
 		for (Mower mower : mowers) {
 			int x = (int) mower.getPosition().getX();
 			int y = (int) mower.getPosition().getY();
@@ -45,7 +47,7 @@ public class Lawn {
 					System.out.print("Deplacement avant");
 					switch (orientation) {
 					case "N":
-						System.out.println("vers le nord");
+						System.out.println(" vers le nord");
 						if(y+1>areaSize.getY()) {
 							continue;
 						}
@@ -78,50 +80,10 @@ public class Lawn {
 					break;
 				case "D":
 					System.out.print("Rotation droite");
-					switch (orientation) {
-					case "N":
-						System.out.println(" vers est");
-						orientation = "E";
-						break;
-					case "E":
-						System.out.println(" vers sud");
-						orientation = "S";
-						break;
-					case "W":
-						System.out.println(" vers nord");
-						orientation = "N";
-						break;
-					case "S":
-						System.out.println(" vers ouest");
-						orientation = "W";
-						break;
-					default:
-						break;
-					}
-					break;
+					orientation = getNextOrientationRight(orientation);
 				case "G":
 					System.out.print("Rotation gauche");
-					switch (orientation) {
-					case "N":
-						System.out.println(" vers ouest");
-						orientation = "W";
-						break;
-					case "E":
-						System.out.println(" vers nord");
-						orientation = "N";
-						break;
-					case "W":
-						System.out.println(" vers sud");
-						orientation = "S";
-						break;
-					case "S":
-						System.out.println(" vers est");
-						orientation = "E";
-						break;
-					default:
-						break;
-					}
-					break;
+					orientation = getNextOrientationLeft(orientation);
 				default:
 					break;
 				}
@@ -131,6 +93,24 @@ public class Lawn {
 		}
 		System.out.println(result);
 		return result;
+	}
+
+	private String getNextOrientationRight(String currentOrientation) {
+		int currentIndexOrientation = Arrays.asList(orientations).indexOf(currentOrientation);
+		int nextIndex = currentIndexOrientation + 1;
+		if (nextIndex >= orientations.length) {
+			return orientations[0];
+		} else
+			return orientations[nextIndex];
+	}
+
+	private String getNextOrientationLeft(String currentOrientation) {
+		int currentIndexOrientation = Arrays.asList(orientations).indexOf(currentOrientation);
+		int nextIndex = currentIndexOrientation - 1;
+		if (nextIndex < 0) {
+			return orientations[orientations.length - 1];
+		} else
+			return orientations[nextIndex];
 	}
 
 	public ArrayList<Mower> getMowers() {
