@@ -12,7 +12,7 @@ public class MowerApplication {
 
 	public static void main(String[] args) {
 		try(AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MowerApplication.class)){
-			Runner moweRunner = context.getBean("runner", Runner.class);
+			Lawn moweLawn = context.getBean("lawn", Lawn.class);
 
 			//moweRunner.execTondeuse();
 		} // Fermeture implicite du context

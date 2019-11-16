@@ -31,26 +31,24 @@ public class ParseShould {
     	//when & then
     	mockFile.createNewFile();
 		mowerParser.parse(mockFile);
-		
 	}
 	
     @Test
-    public void return_empty_list_when_file_empty() throws IOException{
+    public void return_null_list_when_file_empty() throws IOException{
         //given
     	File mockFile = new File(TESTFILE);
     	mockFile.createNewFile();
     	
         //when
-        List<Mower> mowers = mowerParser.parse(mockFile);
-
+        Lawn lawn= mowerParser.parse(mockFile);
         mockFile.delete();
         
 		//then
-        Assert.assertEquals(true, mowers.isEmpty());
+		Assert.assertNull(lawn);
     }
     
     @Test
-    public void return_empty_when_file_has_less_than_3_line() throws IOException {
+    public void return_null_when_file_has_less_than_3_lines() throws IOException {
     	//given
     	File mockFile = new File(TESTFILE);
     	mockFile.createNewFile();
@@ -60,12 +58,11 @@ public class ParseShould {
     	writer.close();
     	
         //when
-        List<Mower> mowers = mowerParser.parse(mockFile);
-        
+        Lawn lawn = mowerParser.parse(mockFile);
         mockFile.delete();
         
 		//then
-		Assert.assertEquals(true, mowers.isEmpty());
+		Assert.assertNull(lawn);
     }
     
     @Test
@@ -81,17 +78,15 @@ public class ParseShould {
     	writer.close();
     	
         //when
-        
-        List<Mower> mowers = mowerParser.parse(mockFile);
-        
+        Lawn lawn= mowerParser.parse(mockFile);
         mockFile.delete();
         
 		//then
-        Assert.assertEquals(1, mowers.size());
+        Assert.assertEquals(1, lawn.getMowers().size());
     }
     
     @Test
-    public void return_2_mowers_when_file_has_2_mower() throws IOException {
+    public void return_2_mower_when_file_has_2_mower() throws IOException {
     	//given
     	File mockFile = new File(TESTFILE);
     	mockFile.createNewFile();
@@ -106,12 +101,12 @@ public class ParseShould {
     	
         //when
         
-        List<Mower> mowers = mowerParser.parse(mockFile);
+        Lawn lawn= mowerParser.parse(mockFile);
         
         mockFile.delete();
         
 		//then
-		Assert.assertEquals(2, mowers.size());
+		Assert.assertEquals(2, lawn.getMowers().size());
     }
     
     @Test
@@ -125,19 +120,16 @@ public class ParseShould {
     	writer.println("1 2 N");
     	writer.println("GAGAGAGAA");
     	writer.close();
-    	
-        //when
-        
+		Point expectedAreaSize = new Point(5, 5);
 
-        mowerParser.parse(mockFile);
-        
-        mockFile.delete();
-        
-        Point mockedAreaSize = new Point(5, 5);
-        
+		//when
+		Lawn lawn = mowerParser.parse(mockFile);
+		mockFile.delete();
+
+
 		//then
-        Assert.assertEquals( mockedAreaSize.getX(), mowerParser.getAreaSize().getX(), 0);
-        Assert.assertEquals( mockedAreaSize.getY(), mowerParser.getAreaSize().getY(), 0);
+        Assert.assertEquals( expectedAreaSize.getX(), lawn.getAreaSize().getX(), 0);
+        Assert.assertEquals( expectedAreaSize.getY(), lawn.getAreaSize().getY(), 0);
     }
     
     @Test(expected = PatternSyntaxException.class)
@@ -153,7 +145,6 @@ public class ParseShould {
     	writer.close();
     	
         //when
-        
         mowerParser.parse(mockFile);
         
         mockFile.delete();
@@ -178,14 +169,14 @@ public class ParseShould {
 
         //when
         
-        List<Mower> mowers = mowerParser.parse(mockFile);
+        Lawn lawn = mowerParser.parse(mockFile);
 
         mockFile.delete();
 
 		//then
-		Assert.assertEquals( expectedPosition.getX(), mowers.get(0).getStartPosition().getX(), 0);
-		Assert.assertEquals( expectedPosition.getY(), mowers.get(0).getStartPosition().getY(), 0);
-		Assert.assertEquals( expectedPosition.getOrientation(), mowers.get(0).getStartPosition().getOrientation());
+		Assert.assertEquals( expectedPosition.getX(), lawn.getMowers().get(0).getPosition().getX(), 0);
+		Assert.assertEquals( expectedPosition.getY(), lawn.getMowers().get(0).getPosition().getY(), 0);
+		Assert.assertEquals( expectedPosition.getOrientation(), lawn.getMowers().get(0).getPosition().getOrientation());
     }
     
     @Test
@@ -203,13 +194,12 @@ public class ParseShould {
     	writer.close();
 
         //when
-        List<Mower> mowers = mowerParser.parse(mockFile);
-
+        Lawn lawn= mowerParser.parse(mockFile);
         mockFile.delete();
 
 		//then
         for (int i = 0; i < expectedMoves.length; i++) {
-        	Assert.assertTrue(expectedMoves[i].equals(mowers.get(0).getMoves()[i]));
+        	Assert.assertTrue(expectedMoves[i].equals(lawn.getMowers().get(0).getMoves()[i]));
 		}
     }
     
@@ -229,11 +219,11 @@ public class ParseShould {
     	writer.close();
 
         //when
-        List<Mower> mowers = mowerParser.parse(mockFile);
+        Lawn lawn= mowerParser.parse(mockFile);
         mockFile.delete();
         
 		//then
-        Assert.assertEquals(1, mowers.size());
+        Assert.assertEquals(1, lawn.getMowers().size());
     }
     
     @Test
@@ -252,11 +242,11 @@ public class ParseShould {
     	writer.close();
     	
         //when
-        List<Mower> mowers = mowerParser.parse(mockFile);
+        Lawn lawn= mowerParser.parse(mockFile);
         mockFile.delete();
         
 		//then
-        Assert.assertEquals(1, mowers.size());
+        Assert.assertEquals(1, lawn.getMowers().size());
     }
     
     @Test
@@ -277,11 +267,11 @@ public class ParseShould {
     	writer.close();
     	
         //when
-        List<Mower> mowers = mowerParser.parse(mockFile);
+        Lawn lawn= mowerParser.parse(mockFile);
         mockFile.delete();
         
 		//then
-        Assert.assertEquals(2, mowers.size());
+        Assert.assertEquals(2, lawn.getMowers().size());
     }
     
 }

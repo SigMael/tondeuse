@@ -16,7 +16,7 @@ public class Mower {
 		this.moves = moves;
 	}
 
-    public MowerPoint getStartPosition() {
+    public MowerPoint getPosition() {
 		return startPosition;
 	}
 

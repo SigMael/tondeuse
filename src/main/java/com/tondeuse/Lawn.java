@@ -1,30 +1,44 @@
 package com.tondeuse;
 
-import java.util.List;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.BitSet;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class Runner {
+public class Lawn {
 
-	public List<Mower> start() {
-		return null;
+	private ArrayList<Mower> mowers;
+
+    public Point getAreaSize() {
+        return areaSize;
+    }
+
+    private Point areaSize ;
+
+    public Lawn() {}
+
+    public Lawn(Point areaSize){
+		this.areaSize = areaSize;
+		this.mowers = new ArrayList<>();
 	}
 
-	public void execute() {
-
+	public Lawn (Point areaSize, ArrayList<Mower> mowers) {
+		this(areaSize);
+		this.mowers = mowers;
 	}
 
-	public Object mowArea(List<Mower> mowers, MowerPoint areaSize) {
+	public Object mow() {
 		String result = "";
 		if(mowers.size() == 0) {
 			return "Rien a tondre!";
 		} 
 		
 		for (Mower mower : mowers) {
-			int x = (int) mower.getStartPosition().getX();
-			int y = (int) mower.getStartPosition().getY();
-			String orientation = mower.getStartPosition().getOrientation();
+			int x = (int) mower.getPosition().getX();
+			int y = (int) mower.getPosition().getY();
+			String orientation = mower.getPosition().getOrientation();
 			for (String move : mower.getMoves()) {
 				switch (move) {
 				case "A":
@@ -112,10 +126,14 @@ public class Runner {
 					break;
 				}
 			}
-		mowers.get(0).getStartPosition().setLocation(x,y);
+		mowers.get(0).getPosition().setLocation(x,y);
 		result += x + " "+ y + " " + orientation;
 		}
 		System.out.println(result);
 		return result;
+	}
+
+	public ArrayList<Mower> getMowers() {
+		return this.mowers;
 	}
 }

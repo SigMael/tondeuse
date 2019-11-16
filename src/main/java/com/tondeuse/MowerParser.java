@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -35,19 +34,17 @@ public class MowerParser {
 
     private final String patternMoves = "[GDA]*";
 
-    private Point areaSize;
-
-    public List<Mower> parse(File inputFile) throws IOException, PatternSyntaxException {
+    public Lawn parse(File inputFile) throws IOException, PatternSyntaxException {
         if (inputFile.exists()) {
             String areaReadLine = "";
             try {
                 ArrayList<String> fileLines = getLines(inputFile);
-                if (fileLines.size() < MINIMUM_ROWS) {
-                    return new ArrayList<Mower>();
+                if (fileLines.size() >= MINIMUM_ROWS) {
+                    areaReadLine = fileLines.remove(INDEX_AREA_SIZE);
+                    Point areaSize = readSizeArea(areaReadLine);
+                    ArrayList<Mower> mowers = getMowers(fileLines, areaSize);
+                    return new Lawn(areaSize, mowers);
                 }
-                areaReadLine = fileLines.remove(INDEX_AREA_SIZE);
-                this.areaSize = readSizeArea(areaReadLine);
-                return getMowers(fileLines);
             } catch (IOException e) {
                 LOG.error("Erreur lors de la lecture du fichier");
                 throw e;
@@ -55,7 +52,7 @@ public class MowerParser {
                 throw new PatternSyntaxException(PATTERN_AREA_SIZE, areaReadLine, -1);
             }
         }
-        return new ArrayList<Mower>();
+        return null;
     }
 
     private ArrayList<String> getLines(File mockFile) throws IOException {
@@ -71,13 +68,13 @@ public class MowerParser {
         return fileLines;
     }
 
-    private ArrayList<Mower> getMowers(ArrayList<String> fileLines) {
+    private ArrayList<Mower> getMowers(ArrayList<String> fileLines, Point areaSize) {
         ArrayList<Mower> mowers = new ArrayList<Mower>();
         for (int i = 0; i < fileLines.size(); i += 2) {
             String lineStartPosition = fileLines.get(i);
             String lineMoves = fileLines.get(i + 1);
             Mower mower = buildMowerFromLines(lineStartPosition, lineMoves);
-            if (mower != null) {
+            if (mower != null && isStartingPositionInsideArea(mower.getPosition(), areaSize)) {
                 mowers.add(mower);
             }
         }
@@ -119,15 +116,12 @@ public class MowerParser {
             return null;
         }
 
-        if (!isStartingPositionInsideArea(x, y)) {
-            return null;
-        }
         return new MowerPoint(x, y, orientation);
     }
 
-    private boolean isStartingPositionInsideArea(int x, int y) {
-        if ((x > areaSize.getX() || y > areaSize.getY())) {
-            LOG.info("La tondeuse [{}] [{}] ne sera pas utilisee car sa position ne rentre pas dans la zone de travail", x, y);
+    private boolean isStartingPositionInsideArea(Point mowerPosition, Point areaSize) {
+        if ((mowerPosition.getX() > areaSize.getX() || mowerPosition.getY() > areaSize.getY())) {
+            LOG.info("La tondeuse [{}] [{}] ne sera pas utilisee car sa position ne rentre pas dans la zone de travail", mowerPosition.getX(), mowerPosition.getY());
             return false;
         }
         return true;
@@ -140,7 +134,4 @@ public class MowerParser {
         return null;
     }
 
-    public Point getAreaSize() {
-        return this.areaSize;
-    }
 }
