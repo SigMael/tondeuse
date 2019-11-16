@@ -21,7 +21,8 @@ public class MowerPoint extends Point {
 		return orientation;
 	}
 
-	public void setOrientation(String orientation) {
-		this.orientation = orientation;
+	@Override
+	public String toString() {
+		return this.x + " " + this.y + " " +this.orientation;
 	}
 }

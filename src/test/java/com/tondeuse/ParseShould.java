@@ -195,7 +195,7 @@ public class ParseShould {
 
 		//then
         for (int i = 0; i < expectedMoves.length; i++) {
-        	Assert.assertTrue(expectedMoves[i].equals(lawn.getMowers().get(0).getMoves()[i]));
+        	Assert.assertEquals(expectedMoves[i], lawn.getMowers().get(0).getMoves()[i]);
 		}
     }
     

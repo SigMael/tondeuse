@@ -8,7 +8,6 @@ public class Mower {
 
 	@Autowired
 	private MowerPoint position;
-
 	private String[] moves;
 
 	public Mower(MowerPoint startPosition, String[] moves) {
@@ -23,4 +22,5 @@ public class Mower {
 	public String[] getMoves() {
 		return moves;
 	}
+
 }

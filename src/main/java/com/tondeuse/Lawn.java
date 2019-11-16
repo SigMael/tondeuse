@@ -31,71 +31,83 @@ public class Lawn {
 
 	private final String orientations[] = new String[] { "N", "E", "S", "W" };
 
-	public Object mow() {
+	public String mow() {
 		String result = "";
+        boolean isNextLine = false;
+
 		if(mowers.size() == 0) {
 			return "Rien a tondre!";
 		}
 
 		for (Mower mower : mowers) {
-			int x = (int) mower.getPosition().getX();
-			int y = (int) mower.getPosition().getY();
-			String orientation = mower.getPosition().getOrientation();
+		    MowerPoint currentPosition = mower.getPosition();
+			int x = (int) currentPosition.getX();
+			int y = (int) currentPosition.getY();
+			String orientation = currentPosition.getOrientation();
+            MowerPoint newPosition;
 			for (String move : mower.getMoves()) {
 				switch (move) {
 				case "A":
-					System.out.print("Deplacement avant");
-					switch (orientation) {
-					case "N":
-						System.out.println(" vers le nord");
-						if(y+1>areaSize.getY()) {
-							continue;
-						}
-						y++;
-						break;
-					case "E":
-						System.out.println(" vers est");
-						if(x+1>areaSize.getX()) {
-							continue;
-						}
-						x++;
-						break;
-					case "W":
-						System.out.println(" vers ouest");
-						if(x-1<0) {
-							continue;
-						}
-						x--;
-						break;
-					case "S":
-						System.out.println(" vers le sud");
-						if(y-1<0) {
-							continue;
-						}
-						y--;
-						break;
-					default:
-						break;
-					}
-					break;
+                    newPosition = getNextMoveForwardPosition(x, y, orientation);
+                    x = (int) newPosition.getX();
+                    y = (int) newPosition.getY();
+                    break;
 				case "D":
-					System.out.print("Rotation droite");
 					orientation = getNextOrientationRight(orientation);
+					break;
 				case "G":
-					System.out.print("Rotation gauche");
 					orientation = getNextOrientationLeft(orientation);
+                    break;
 				default:
 					break;
 				}
 			}
-		mowers.get(0).getPosition().setLocation(x,y);
-		result += x + " "+ y + " " + orientation;
+            result = getOutput(result, isNextLine, x, y, orientation);
+			isNextLine = true;
 		}
-		System.out.println(result);
 		return result;
 	}
 
-	private String getNextOrientationRight(String currentOrientation) {
+    private String getOutput(String result, boolean isNextLine, int x, int y, String orientation) {
+        if(isNextLine){
+            result += "\n";
+            result += x + " " + y + " " + orientation;
+        }
+        else{
+            result += x + " " + y + " " + orientation;
+        }
+        return result;
+    }
+
+    private MowerPoint getNextMoveForwardPosition(int x, int y, String orientation) {
+        switch (orientation) {
+            case "N":
+                if (y + 1 <= areaSize.getY()) {
+                    y++;
+                }
+                break;
+            case "E":
+                if (x + 1 <= areaSize.getX()) {
+                    x++;
+                }
+                break;
+            case "W":
+                if (x - 1 >= 0) {
+                    x--;
+                }
+                break;
+            case "S":
+                if (y - 1 >= 0) {
+                    y--;
+                }
+                break;
+            default:
+                break;
+        }
+        return new MowerPoint(x, y, orientation);
+    }
+
+    private String getNextOrientationRight(String currentOrientation) {
 		int currentIndexOrientation = Arrays.asList(orientations).indexOf(currentOrientation);
 		int nextIndex = currentIndexOrientation + 1;
 		if (nextIndex >= orientations.length) {

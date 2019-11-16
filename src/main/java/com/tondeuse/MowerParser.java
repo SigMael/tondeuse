@@ -11,30 +11,34 @@ import java.util.regex.PatternSyntaxException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MowerParser {
 
     private static final Logger LOG = LogManager.getLogger(MowerParser.class);
-    public static final int INDEX_AREA_SIZE = 0;
 
-    public final int MINIMUM_ROWS = 3;
+    private final int DATA_LINES_BY_MOWER = 2;
+    private final int INDEX_AREA_SIZE = 0;
+    private final int MINIMUM_ROWS = 3;
 
-    //	@Value("${file.input.separator}")
-    private final String patternCoordinateSeparator = "\\u0020";
+    @Value("${file.input.separator}")
+    private String PATTERN_COORDINATE_SEPARATOR;
 
-    private final String patternMovesSeparator = "";
+    @Value("${file.moves.separator}")
+    private String PATTERN_MOVES_SEPARATOR;
 
-    //	@Value("${pattern.area}")
-    private final String PATTERN_AREA_SIZE = "\\d+ \\d+";
+    @Value("${file.areasize.pattern}")
+    private String PATTERN_AREA_SIZE;
 
-    //	@Value("${pattern.startPosition}")
-    private final String patternStartPosition = "\\d+ \\d+ [NEWS]{1}";
+    @Value("${file.startPosition.pattern}")
+    private String PATTERN_START_POSITION;
 
     private final String patternMoves = "[GDA]*";
 
     public Lawn parse(File inputFile) throws IOException, PatternSyntaxException {
+
         if (inputFile.exists()) {
             String areaReadLine = "";
             try {
@@ -49,6 +53,7 @@ public class MowerParser {
                 LOG.error("Erreur lors de la lecture du fichier");
                 throw e;
             } catch (PatternSyntaxException e) {
+                LOG.error("Erreur lors du parsing de la ligne 1 : le format de la zone est incorrect");
                 throw new PatternSyntaxException(PATTERN_AREA_SIZE, areaReadLine, -1);
             }
         }
@@ -70,7 +75,7 @@ public class MowerParser {
 
     private ArrayList<Mower> getMowers(ArrayList<String> fileLines, Point areaSize) {
         ArrayList<Mower> mowers = new ArrayList<Mower>();
-        for (int i = 0; i < fileLines.size(); i += 2) {
+        for (int i = 0; i < fileLines.size(); i += DATA_LINES_BY_MOWER) {
             String lineStartPosition = fileLines.get(i);
             String lineMoves = fileLines.get(i + 1);
             Mower mower = buildMowerFromLines(lineStartPosition, lineMoves);
@@ -96,10 +101,9 @@ public class MowerParser {
     private Point readSizeArea(String line) throws PatternSyntaxException {
         int x, y;
         if (Pattern.matches(PATTERN_AREA_SIZE, line)) {
-            x = Integer.parseInt(line.split(patternCoordinateSeparator)[0]);
-            y = Integer.parseInt(line.split(patternCoordinateSeparator)[1]);
+            x = Integer.parseInt(line.split(PATTERN_COORDINATE_SEPARATOR)[0]);
+            y = Integer.parseInt(line.split(PATTERN_COORDINATE_SEPARATOR)[1]);
         } else {
-            LOG.error("Erreur lors du parsing de la ligne 1 : le format de la zone est incorrect");
             throw new PatternSyntaxException(PATTERN_AREA_SIZE, line, -1);
         }
         return new Point(x, y);
@@ -108,14 +112,13 @@ public class MowerParser {
     private MowerPoint readStartingPosition(String line) {
         int x, y;
         String orientation;
-        if (Pattern.matches(patternStartPosition, line)) {
-            x = Integer.parseInt(line.split(patternCoordinateSeparator)[0]);
-            y = Integer.parseInt(line.split(patternCoordinateSeparator)[1]);
-            orientation = line.split(patternCoordinateSeparator)[2];
+        if (Pattern.matches(PATTERN_START_POSITION, line)) {
+            x = Integer.parseInt(line.split(PATTERN_COORDINATE_SEPARATOR)[0]);
+            y = Integer.parseInt(line.split(PATTERN_COORDINATE_SEPARATOR)[1]);
+            orientation = line.split(PATTERN_COORDINATE_SEPARATOR)[2];
         } else {
             return null;
         }
-
         return new MowerPoint(x, y, orientation);
     }
 
@@ -129,7 +132,7 @@ public class MowerParser {
 
     private String[] readMoves(String line) {
         if (Pattern.matches(patternMoves, line)) {
-            return line.split(patternMovesSeparator);
+            return line.split(PATTERN_MOVES_SEPARATOR);
         }
         return null;
     }

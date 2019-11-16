@@ -50,7 +50,7 @@ public class MowAreaShould {
 		lawn = new Lawn( new Point(10,10), mowers);
 
 		//when
-		Object finalPositionMover = lawn.mow();
+		String finalPositionMover = lawn.mow();
 
 		//then
 		assertEquals("1 0 E", finalPositionMover);
@@ -72,7 +72,7 @@ public class MowAreaShould {
 		lawn = new Lawn( new Point(10,10), mowers);
 
 		//when
-		Object finalPositionMover = lawn.mow();
+		String finalPositionMover = lawn.mow();
 
 		// then
 		assertEquals("0 0 N", finalPositionMover);
@@ -94,7 +94,7 @@ public class MowAreaShould {
 		lawn = new Lawn( new Point(10,10), mowers);
 
 		//when
-		Object finalPositionMover = lawn.mow();
+		String finalPositionMover = lawn.mow();
 
 		// then
 		assertEquals("0 0 W", finalPositionMover);
@@ -142,6 +142,29 @@ public class MowAreaShould {
 
 		// then
 		assertEquals("1 3 N", finalPositionMover);
+	}
+
+	@Test
+	public void return_2_mowers_good_final_positions() {
+		//given
+		mockedMower = mock(Mower.class);
+		when(mockedMower.getMoves()).thenReturn(new String[] {"G", "A", "G", "A", "G", "A", "G", "A", "A"}).thenReturn(new String[] {"A", "A", "D", "A", "A", "D", "A", "D", "D", "A"});
+		when(mockedMower.getPosition()).thenReturn(new MowerPoint(1, 2, "N")).thenReturn(new MowerPoint(3, 3, "E"));
+
+		mockedAreaSize = mock(MowerPoint.class);
+		when(mockedAreaSize.getX()).thenReturn((double) 5);
+		when(mockedAreaSize.getY()).thenReturn((double) 5);
+
+		ArrayList mowers = new ArrayList<Mower>();
+		mowers.add(mockedMower);
+		mowers.add(mockedMower);
+		lawn = new Lawn( new Point(5,5), mowers);
+
+		//when
+		Object finalPositionMover = lawn.mow();
+
+		// then
+		assertEquals("1 3 N\n5 1 E", finalPositionMover);
 	}
     
 }
