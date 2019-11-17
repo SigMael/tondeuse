@@ -22,7 +22,8 @@ public class ParseShould {
 	
 	@Autowired
 	private MowerParser mowerParser;
-	
+
+	// TODO : tests parametres
 	@Test(expected = IOException.class )
 	public void return_exception_when_file_is_not_readable_or_not_found() throws IOException {
 		//given
@@ -46,6 +47,26 @@ public class ParseShould {
 		//then
 		Assert.assertNull(lawn);
     }
+
+	@Test(expected = PatternSyntaxException.class)
+	public void return_pattern_exception_when_file_contain_multiple_empty_lines() throws IOException{
+		//given
+		File mockFile = new File(TESTFILE);
+		mockFile.createNewFile();
+
+		PrintWriter writer = new PrintWriter(mockFile, "UTF-8");
+		writer.println("\n");
+		writer.println("\n");
+		writer.println("\n");
+		writer.close();
+
+		//when
+		Lawn lawn= mowerParser.parse(mockFile);
+		mockFile.delete();
+
+		//then
+		Assert.assertNull(lawn);
+	}
     
     @Test
     public void return_null_when_file_has_less_than_3_lines() throws IOException {
@@ -198,6 +219,36 @@ public class ParseShould {
         	Assert.assertEquals(expectedMoves[i], lawn.getMowers().get(0).getMoves()[i]);
 		}
     }
+
+	@Test
+	public void return_4_mowers_when_file_contain_empty_lines_between_mowers() throws IOException{
+		//given
+		File mockFile = new File(TESTFILE);
+		mockFile.createNewFile();
+		String mockedPosition = "1 2 N";
+		String mockedMoves = "GAGAGAGAA";
+		PrintWriter writer = new PrintWriter(mockFile, "UTF-8");
+		writer.println("5 5");
+		writer.println(mockedPosition);
+		writer.println(mockedMoves);
+		writer.println(mockedPosition);
+		writer.println(mockedMoves);
+		writer.println("\n");
+		writer.println("\n");
+		writer.println("\n");
+		writer.println(mockedPosition);
+		writer.println(mockedMoves);
+		writer.println(mockedPosition);
+		writer.println(mockedMoves);
+		writer.close();
+
+		//when
+		Lawn lawn = mowerParser.parse(mockFile);
+		mockFile.delete();
+
+		//then
+		Assert.assertEquals(4, lawn.getMowers().size());
+	}
     
     @Test
     public void return_1_mower_when_1_mower_out_of_2_has_invalid_start_position() throws IOException {

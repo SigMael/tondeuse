@@ -8,21 +8,34 @@ import org.springframework.context.annotation.PropertySource;
 import java.io.File;
 import java.io.IOException;
 
+// TODO : ajouter des LOG debug / info / error
+// TODO : parametrer le file input via le app properties ?
+// TODO : ajouter des tests parametres
+
+/**
+ * MowerApplication is the Entry point of the Mower Application.
+ * It start the application using input file path in first parameter.
+ *
+ * @author Mael Sigaroudi
+ *
+ */
 @Configuration
 @PropertySource("classpath:application.properties")
 @ComponentScan("com.tondeuse")
 public class MowerApplication {
 
+	/**
+	 * Application main which launch the Mower Application.
+	 * @param args : Parameters given to the app. args[0] Should be input file path.
+	 */
 	public static void main(String[] args) {
 		try(AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MowerApplication.class)){
-
 			MowerParser parser = context.getBean("mowerParser", MowerParser.class);
-			File inputFile = new File(args[0]);
-
-			Lawn lawn = parser.parse(inputFile);
-			System.out.println(lawn.mow());
-
-		} // Fermeture implicite du context
+			Lawn lawn = parser.parse(new File(args[0]));
+			if(lawn != null) {
+				System.out.println(lawn.mow());
+			}
+		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}

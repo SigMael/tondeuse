@@ -24,14 +24,15 @@ public class MowAreaShould {
 	
 	@InjectMocks
 	private MowerPoint mockedAreaSize;
-	
+
+	// TODO : tests avec parametres
 	@Test
 	public void return_nothing_to_do_if_mowers_empty() {
 		//given
 		lawn = new Lawn(new MowerPoint());
 
 		//when & then
-		assertEquals("Rien a tondre!", lawn.mow());
+		assertEquals("Nothing to mow!", lawn.mow());
 	}
 	
 	@Test
@@ -145,7 +146,7 @@ public class MowAreaShould {
 	}
 
 	@Test
-	public void return_2_mowers_good_final_positions() {
+	public void return_2_mowers_with_expected_final_positions() {
 		//given
 		mockedMower = mock(Mower.class);
 		when(mockedMower.getMoves()).thenReturn(new String[] {"G", "A", "G", "A", "G", "A", "G", "A", "A"}).thenReturn(new String[] {"A", "A", "D", "A", "A", "D", "A", "D", "D", "A"});
