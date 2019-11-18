@@ -47,7 +47,6 @@ public class MowerParser {
     /**
      * Strict number of minimum lines necessary in order to load a functional Lawn
      */
-    @Value("${app.minimum.rows}")
     private final int MINIMUM_ROWS = DATA_LINES_BY_MOWER + 1;
 
     /**
@@ -89,22 +88,25 @@ public class MowerParser {
      * @throws PatternSyntaxException : If the a line pattern is not valid in the input file
      */
     public Lawn parse(File inputFile) throws IOException, PatternSyntaxException {
+        LOG.info("Parse process start");
         if (inputFile.exists()) {
             String areaReadLine = "";
             try {
                 ArrayList<String> fileLines = getLines(inputFile);
                 if (fileLines.size() >= MINIMUM_ROWS) {
+                    LOG.info("Starting to parse lines read");
                     areaReadLine = fileLines.remove(INDEX_AREA_SIZE).trim();
                     Point areaSize = readSizeArea(areaReadLine);
                     LOG.debug("MowerParser.parse: areaSize read=[{},{}]", areaSize.getX(), areaSize.getY());
                     ArrayList<Mower> mowers = getMowers(fileLines, areaSize);
+                    LOG.info("Lines parsing completed");
                     return new Lawn(areaSize, mowers);
                 }
                 else{
-                    LOG.error("Incomplet file : the program will now be stopped");
+                    LOG.error("Incomplet file : the program will now stop");
                 }
             } catch (IOException e) {
-                LOG.error("Error reading file");
+                LOG.error("Error reading file {}", inputFile.getPath());
                 throw e;
             } catch (PatternSyntaxException e) {
                 LOG.error("Error parsing file on area size's line: Incorrect format");
@@ -122,15 +124,19 @@ public class MowerParser {
      * @throws IOException : If the file cannot be read
      */
     private ArrayList<String> getLines(File inputFile) throws IOException {
+        LOG.info("Starting to read file {}", inputFile.getPath());
         ArrayList<String> fileLines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
             while (br.ready()) {
                 fileLines.add(br.readLine());
+                LOG.debug("MowerParser.getLines: line currently read={}", fileLines.get(fileLines.size()-1));
             }
         } catch (IOException e) {
+            LOG.error("MowerParser.getLines: error while reading file");
             e.printStackTrace();
             throw e;
         }
+        LOG.info("Read file complete");
         return fileLines;
     }
 
@@ -141,10 +147,12 @@ public class MowerParser {
      * @return List of mowers fully initialized or an empty list if none of the lines has correct format
      */
     private ArrayList<Mower> getMowers(ArrayList<String> fileLines, Point areaSize) {
-        ArrayList<Mower> mowers = new ArrayList<Mower>();
+        ArrayList<Mower> mowers = new ArrayList<>();
         for (int i = 0; i < fileLines.size() - (DATA_LINES_BY_MOWER - 1); i += DATA_LINES_BY_MOWER) {
             String lineStartPosition = fileLines.get(i).trim();
             String lineMoves = fileLines.get(i + 1).trim();
+            LOG.debug("MowerParser.getMowers : lineStartPosition={}", lineStartPosition);
+            LOG.debug("MowerParser.getMowers : lineMoves={}", lineMoves);
             if(lineStartPosition.length() > 0 && lineMoves.length() > 0) {
                 Mower mower = buildMowerFromLines(lineStartPosition, lineMoves);
                 if (mower != null && isStartingPositionInsideArea(mower.getPosition(), areaSize)) {
@@ -152,7 +160,7 @@ public class MowerParser {
                 }
             }
             else{
-                LOG.info("This mower will be ignored because it's starting position is invalid:[{},{}]", lineStartPosition, lineMoves);
+                LOG.info("This mower will be ignored because it's data are invalid:[{},{}]", lineStartPosition, lineMoves);
             }
         }
         return mowers;

@@ -1,5 +1,8 @@
 package com.tondeuse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +17,10 @@ import java.util.Arrays;
 
 public class Lawn {
 
+	/**
+	 * Class logger field
+	 */
+	private static final Logger LOG = LogManager.getLogger(Lawn.class);
 	/**
 	 * The mowers list of the applications which will mow the Lawn
 	 */
@@ -56,7 +63,7 @@ public class Lawn {
 	 * @return String : the final mowers positions separated by line break.
 	 */
 	public String mow() {
-		String result = "";
+		String outputString = "";
         boolean isNewLine = false;
 
 		if(mowers.size() == 0) {
@@ -64,32 +71,42 @@ public class Lawn {
 		}
 
 		for (Mower mower : mowers) {
+			LOG.info("Starting to mow the Lawn!");
 		    MowerPoint currentPosition = mower.getPosition();
 			int x = (int) currentPosition.getX();
 			int y = (int) currentPosition.getY();
+			LOG.debug("Lawn.mow : current mower position=[{},{}]", x, y);
 			String orientation = currentPosition.getOrientation();
             MowerPoint newPosition;
 			for (String move : mower.getMoves()) {
 				switch (move) {
 				case "A":
+            		LOG.debug("Lawn.mow : move={} Moving mower forward", move);
                     newPosition = getNextMoveForwardPosition(x, y, orientation);
                     x = (int) newPosition.getX();
                     y = (int) newPosition.getY();
+					LOG.debug("Lawn.mow : new mower position=[{},{}]", x, y);
                     break;
 				case "D":
+					LOG.debug("Lawn.mow : move={} rotating mower right", move);
 					orientation = getNextOrientationRight(orientation);
+					LOG.debug("Lawn.mow : new mower orientation={}", orientation);
 					break;
 				case "G":
+					LOG.debug("Lawn.mow : move={} rotating mower left", move);
 					orientation = getNextOrientationLeft(orientation);
+					LOG.debug("Lawn.mow : new mower orientation={}", orientation);
                     break;
 				default:
+					LOG.error("Lawn.mow : move={} case unknown", move);
 					break;
 				}
 			}
-            result = getOutput(result, isNewLine, x, y, orientation);
+            outputString = getOutput(outputString, isNewLine, x, y, orientation);
 			isNewLine = true;
 		}
-		return result;
+		LOG.info("The Lawn has been mowed ! Final mower(s) position(s) Output:\n"+outputString);
+		return outputString;
 	}
 
 	/**
@@ -141,7 +158,7 @@ public class Lawn {
                     y--;
                 }
                 break;
-            default:
+			default:
                 break;
         }
         return new MowerPoint(x, y, orientation);

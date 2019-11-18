@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,7 +26,6 @@ public class MowAreaShould {
 	@InjectMocks
 	private MowerPoint mockedAreaSize;
 
-	// TODO : tests avec parametres
 	@Test
 	public void return_nothing_to_do_if_mowers_empty() {
 		//given
@@ -167,5 +167,4 @@ public class MowAreaShould {
 		// then
 		assertEquals("1 3 N\n5 1 E", finalPositionMover);
 	}
-    
 }

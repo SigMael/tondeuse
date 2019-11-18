@@ -8,10 +8,6 @@ import org.springframework.context.annotation.PropertySource;
 import java.io.File;
 import java.io.IOException;
 
-// TODO : ajouter des LOG debug / info / error
-// TODO : parametrer le file input via le app properties ?
-// TODO : ajouter des tests parametres
-
 /**
  * MowerApplication is the Entry point of the Mower Application.
  * It start the application using input file path in first parameter.

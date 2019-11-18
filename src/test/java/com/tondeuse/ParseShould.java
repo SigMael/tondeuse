@@ -23,7 +23,6 @@ public class ParseShould {
 	@Autowired
 	private MowerParser mowerParser;
 
-	// TODO : tests parametres
 	@Test(expected = IOException.class )
 	public void return_exception_when_file_is_not_readable_or_not_found() throws IOException {
 		//given
