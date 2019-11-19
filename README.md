@@ -10,7 +10,7 @@ Pour faire fonctionner le programme il est nécessaire d'avoir installer java et
 Via un IDE tel quie Eclipse ou IntelliJ il est nécessaire de suivre les étapes suivantes :
 - Cloner le projet git sur sont post (git clone https://github.com/SigMael/tondeuse.git)
 - Installer les dépendances Maven du projet (Maven Clean Install)
-- Définir en premier argument du projet le path vers le fichier servant de données d'entrées au programme. Fichier contenant toutes les données 
+- Définir le premier argument du projet correspondant au path vers le fichier servant de données d'entrées au programme. Fichier contenant toutes les données 
 Tondeuse.
 - Run le programme (le main se trouve dans la classe MowerApplication)
 
